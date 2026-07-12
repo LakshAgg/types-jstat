@@ -18,6 +18,7 @@
     },
     "files": [
         "index.d.ts",
-        "test/jstat-tests.ts"
+        "test/jstat-tests.ts",
+        "test/core-tests.ts"
     ]
 }
