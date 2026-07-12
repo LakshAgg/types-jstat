@@ -1,8 +1,25 @@
 # Type definitions for jstat library
 This package has been generated with the help of Qwen3.6 27B from the html documentation pages as well as a review of src code of jstat.
 
-if u find any discripancies, raise an issue with example for each overload.
+## Installation
 
-in order to include in ur project, add "types-jstat" to ur tsconfig "compilerOptions"."types"
+First, install the package as a development dependency:
+```Bash
 
-Needs more tests
+npm install --save-dev @lakshagg/types-jstat
+```
+
+Next, include it in your project by adding it to your tsconfig.json:
+```JSON
+{
+  "compilerOptions": {
+    "types": ["@lakshagg/types-jstat"]
+  }
+}
+```
+
+## Contributing & Issues
+
+Currently, this package needs more tests. Pull requests adding test coverage are highly welcome!
+
+If you find any discrepancies or missing definitions, please raise an issue. When doing so, please include a clear code example for each specific overload that is failing.
