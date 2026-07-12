@@ -15,7 +15,7 @@
  * @example
  * ```typescript
  * const sum = jStat.sum([1, 2, 3, 4, 5]);
- * const chain = jStat([1, 2, 3, 4, 5]).sum().mean();
+ * const chain = jStat([1, 2, 3, 4, 5]).sum(() => {}).mean();
  * ```
  */
 declare function jStat(...data: number[]): jStat.JStat;
