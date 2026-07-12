@@ -1,7 +1,7 @@
 {
     "private": false,
     "name": "@lakshagg/types-jstat",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "TypeScript definitions for jstat",
     "homepage": "https://github.com/LakshAgg/types-jstat",
     "license": "MIT",
