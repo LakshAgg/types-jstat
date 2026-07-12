@@ -8,7 +8,7 @@
     "types": "index.d.ts",
     "repository": {
         "type": "git",
-        "url": "https://github.com/LakshAgg/types-jstat.git",
+        "url": "git+https://github.com/LakshAgg/types-jstat.git",
         "directory": "types/jstat"
     },
     "scripts": {
