@@ -12,7 +12,7 @@ declare namespace jStat {
   function rows(array: number[][]): number;
 
   /**
-   * @todo This function is broken in the jStat source code. It is identical to {@link rows}
+   * @todo This function is broken in the jStat source code. It is identical to {@link row}
    * Returns a specific row or multiple rows from a matrix as a plain array.
    * Equivalent to calling {@link row} and flattening each result.
    *
@@ -231,11 +231,13 @@ declare namespace jStat {
    *   - `value`: The current element.
    *   - `row`: The row index of the current element.
    *   - `col`: The column index of the current element.
+   * @param modify Optional boolean indicating whether to modify the input array in place.
    * @returns The transformed vector or matrix.
    */
   function map(
     array: number[] | number[][],
-    fn: (value: number, row: number, col: number) => number
+    fn: (value: number, row: number, col: number) => number,
+    modify?: boolean
   ): number[] | number[][];
 
   /**
@@ -244,11 +246,13 @@ declare namespace jStat {
    *
    * @param array The input vector or matrix.
    * @param fn A callback that combines the accumulator and the current value.
+   * @param modify Optional boolean indicating whether to modify the input array in place.
    * @returns A vector or matrix of the same shape holding cumulative results.
    */
   function cumreduce(
     array: number[] | number[][],
-    fn: (accumulator: number, current: number) => number
+    fn: (accumulator: number, current: number) => number,
+    modify?: boolean
   ): number[] | number[][];
 
   /**

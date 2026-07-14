@@ -41,6 +41,8 @@ type SingleResponse<T extends number[][]> =
       : number | number[];
 
 declare namespace jStat {
+    type JStat1D = JStat<[number[]]>;
+    type JStat2D = JStat<[number[], ...number[][]]>;
 
     // -------------------------------------------------------------------------
     // Regression Models
@@ -270,17 +272,30 @@ declare namespace jStat {
         randg(shape: number, n?: number, m?: number, callback?: (value: number | number[][]) => void): JStat;
 
         // -- Linear Algebra instance methods --
-        add(arg: number, callback?: (value: number | number[] | number[][]) => void): JStat;
-        subtract(arg: number, callback?: (value: number | number[] | number[][]) => void): JStat;
-        divide(arg: number, callback?: (value: number | number[] | number[][]) => void): JStat;
-        multiply(arg: number, callback?: (value: number | number[] | number[][]) => void): JStat;
-        dot(arg: ReadonlyArray<number> | ReadonlyArray<ReadonlyArray<number>>, callback?: (value: number) => void): number;
-        pow(arg: number, callback?: (value: number | number[] | number[][]) => void): JStat;
-        exp(callback?: (value: number | number[] | number[][]) => void): JStat;
-        log(callback?: (value: number | number[] | number[][]) => void): JStat;
-        abs(callback?: (value: number | number[] | number[][]) => void): JStat;
-        norm(callback?: (value: number) => void): number;
-        angle(arg: ReadonlyArray<number> | ReadonlyArray<ReadonlyArray<number>>, callback?: (value: number) => void): number;
+        add(arg: T | JStat<T> | number): JStat<T>;
+        add(arg: T | JStat<T> | number, callback: (value: T) => void): this;
+        subtract(arg: T | JStat<T> | number): JStat<T>;
+        subtract(arg: T | JStat<T> | number, callback: (value: T) => void): this;
+
+        divide(arg: number[] | number | number[][]): JStat;
+        divide(arg: number[] | number | number[][], callback: (value: JStat) => void): this;
+        multiply(arg: number[] | number | number[][]): JStat;
+        multiply(arg: number[] | number | number[][], callback: (value: JStat) => void): this;
+
+        dot(arg: ReadonlyArray<number> | ReadonlyArray<ReadonlyArray<number>>): number | JStat<[number[]]>;
+        dot(arg: ReadonlyArray<number> | ReadonlyArray<ReadonlyArray<number>>, callback: (value:  number | JStat<[number[]]>) => void): this;
+        pow(arg: number | [number] | [[number]]): JStat<T>;
+        pow(arg: number | [number] | [[number]], callback: (value: JStat<T>) => void): this;
+        exp(): JStat<T>;
+        exp(_: any, callback: (value: JStat<T>) => void): this;
+        log(): JStat<T>;
+        log(_: any, callback: (value: JStat<T>) => void): this;
+        abs(): JStat<T>;
+        abs(_: any, callback: (value: JStat<T>) => void): this;
+        norm(): number;
+        norm(_: any, callback: (value: number) => void): this;
+        angle(arg: ReadonlyArray<number> | ReadonlyArray<ReadonlyArray<number>>): number;
+        angle(arg: ReadonlyArray<number> | ReadonlyArray<ReadonlyArray<number>>, callback: (value: number) => void): this;
 
         // -- Statistical Tests instance methods --
         /** Returns the z-score for the current object values. */

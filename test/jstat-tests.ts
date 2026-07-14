@@ -861,7 +861,7 @@ assertInstanceOf(matObj.pow(2), jStat.jStat, 'matObj.pow');
 assertInstanceOf(matObj.exp(), jStat.jStat, 'matObj.exp');
 assertInstanceOf(matObj.log(), jStat.jStat, 'matObj.log');
 assertInstanceOf(matObj.abs(), jStat.jStat, 'matObj.abs');
-assertNumber(matObj.dot([1, 2, 3]), 'matObj.dot');
+assertNumber(matObj.dot([1, 2, 3]) as number, 'matObj.dot');
 assertNumber(matObj.norm(), 'matObj.norm');
 assertNumber(matObj.angle([1, 0, 0]), 'matObj.angle');
 

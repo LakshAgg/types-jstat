@@ -169,3 +169,9 @@ export function assertInstanceOf<T extends new (...args: any[]) => any>(value: I
 export function _section(_name: string) {
   // console.log(`━━━ ${_name} ━━━`);
 }
+
+export function assert(truth: boolean, message: string) {
+  if (!truth) {
+    throw new Error(`Assertion failed: ${message}`);
+  }
+}

@@ -303,6 +303,14 @@ const sa2: number[][] = [
 const assignRow: number[][] = jStat.sliceAssign(sa2, { row: 1, col: { start: 1 } }, [10, 20]);
 assertMatrix(assignRow, "jStat.sliceAssign row");
 
+const sa4: number[][] = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9],
+];
+const assignCol: number[][] = jStat.sliceAssign(sa4, { row: { start: 1 }, col: 1 }, [10, 20]);
+assertMatrix(assignCol, "jStat.sliceAssign col");
+
 // sliceAssign — sub-matrix
 const sa3: number[][] = [
   [1, 2, 3],
@@ -395,7 +403,17 @@ assertInstanceOf(inst.identity(3, 3), jStat.jStat, "inst.identity(3, 3)");
 
 const iClear: jStat.JStat = inst.clear();
 assertInstanceOf(iClear, jStat.jStat, "inst.clear()");
+assertInstanceOf(
+  inst.clear(() => {}),
+  jStat.jStat,
+  "inst.clear(cb)",
+);
 assertBoolean(inst.symmetric(), "inst.symmetric(fn)");
+assertInstanceOf(
+  inst.symmetric((v: boolean) => {}),
+  jStat.jStat,
+  "inst.symmetric(cb)",
+);
 
 // row/col instance
 const iRow: jStat.JStat = jStat([
@@ -414,7 +432,14 @@ const iCol: jStat.JStat = jStat([
   [3, 4],
 ]).col(0);
 assertInstanceOf(iCol, jStat.jStat, "inst.col(0)");
-
+assertInstanceOf(
+  jStat([
+    [1, 2],
+    [3, 4],
+  ]).col(0, (v: jStat.JStat) => {}),
+  jStat.jStat,
+  "inst.col(0, fn)",
+);
 
 // instance toArray
 const iArr: number[] | number[][] = jStat([10, 20, 30]).toArray();

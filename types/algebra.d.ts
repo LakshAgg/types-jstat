@@ -1,4 +1,15 @@
+type _NArray<T, N extends number, R extends T[] = []> = R["length"] extends N ? R : R["length"] extends 999 ? T[] : _NArray<T, N, [T, ...R]>;
+type NArray<T, N extends number> = number extends N ? T[] : _NArray<T, N>;
+
 declare namespace jStat {
+  type Array1D = number[] | [number[]] | jStat.JStat1D;
+  type Array2D = [number[], ...number[][]] | jStat.JStat2D;
+  type RawMatrix<M extends number, N extends number> = NArray<NArray<number, N>, M>;
+  type Matrix<M extends number, N extends number> = (RawMatrix<M, N> | JStat<RawMatrix<M, N>>) & {
+    __brand_M?: M;
+    __brand_N?: N;
+  };
+
   // -------------------------------------------------------------------------
   // Linear Algebra static methods
   // -------------------------------------------------------------------------
@@ -10,9 +21,9 @@ declare namespace jStat {
    * @param B The second operand — either a scalar or a matrix/vector of matching shape.
    * @returns A + B element-wise.
    */
-  function add(A: number, B: number): number;
-  function add(A: number[], B: number | number[]): number[];
-  function add(A: number[][], B: number | number[][]): number[][];
+  function add(A: Array1D, B: number | Array1D): number[];
+  function add(A: Array2D, B: number | Array2D): number[][];
+  function add(A: number[][] | number[], B: number | number[][] | number[]): number[][] | number[];
 
   /**
    * Subtracts `B` from every entry of `A`, or subtracts two matrices element-wise.
@@ -21,9 +32,9 @@ declare namespace jStat {
    * @param B The second operand.
    * @returns A − B element-wise.
    */
-  function subtract(A: number, B: number): number;
-  function subtract(A: number[], B: number | number[]): number[];
-  function subtract(A: number[][], B: number | number[][]): number[][];
+  function subtract(A: Array1D, B: number | Array1D): number[];
+  function subtract(A: Array2D, B: number | Array2D): number[][];
+  function subtract(A: number[][] | number[], B: number | number[][] | number[]): number[][] | number[];
 
   /**
    * Divides every entry of `A` by a scalar, or divides two matrices (A × B⁻¹).
@@ -32,10 +43,9 @@ declare namespace jStat {
    * @param B The divisor — either a scalar or a square matrix.
    * @returns A / B.
    */
-  function divide(A: number, B: number): number;
-  function divide(A: number[], B: number): number[];
-  function divide(A: number[][], B: number): number[][];
-  function divide(A: number[] | number[][], B: number[] | number[][]): number[] | number[][];
+  function divide(A: Array1D, B: number): number[];
+  function divide(A: Array2D, B: number): number[][];
+  function divide(A: Array1D | Array2D, B: Array1D | Array2D): number | number[] | number[][];
 
   /**
    * Multiplies every entry of `A` by a scalar, or performs matrix multiplication
@@ -45,10 +55,10 @@ declare namespace jStat {
    * @param B The right operand — either a scalar or a matrix.
    * @returns A × B.
    */
-  function multiply(A: number, B: number): number;
-  function multiply(A: number[], B: number): number[];
-  function multiply(A: number[][], B: number): number[][];
-  function multiply(A: number[] | number[][], B: number[] | number[][]): number | number[] | number[][];
+  function multiply(A: Array1D, B: number): number[];
+  function multiply(A: Array2D, B: number): number[][];
+  function multiply<const A extends [NArray<number, number>], N extends number = A[0]["length"]>(A: A, B: Matrix<N, 1>): number;
+  function multiply<const TA extends RawMatrix<number, number>, N extends number = TA[0]["length"]>(A: TA, B: Matrix<N, number>): number[][];
 
   /**
    * Returns the outer product of two vectors: Aᵢ × Bⱼ, producing a matrix.
@@ -57,7 +67,7 @@ declare namespace jStat {
    * @param B Second vector.
    * @returns An |A| × |B| matrix.
    */
-  function outer(A: ReadonlyArray<number>, B: ReadonlyArray<number>): number[][];
+  function outer(A: number[], B: number[]): number[][];
 
   /**
    * Returns the dot product (element-wise product summed to a scalar) of two vectors.
@@ -66,7 +76,7 @@ declare namespace jStat {
    * @param B Second vector.
    * @returns Σ Aᵢ × Bᵢ.
    */
-  function dot(A: ReadonlyArray<number>, B: ReadonlyArray<number>): number;
+  function dot(A: number[], B: number[]): number;
 
   /**
    * Returns the p-norm of a vector. Defaults to the Euclidean 2-norm (p = 2).
@@ -93,7 +103,7 @@ declare namespace jStat {
    * @param B Right matrix (same number of rows as A).
    * @returns A matrix of shape A.rows × (A.cols + B.cols).
    */
-  function aug(A: ReadonlyArray<ReadonlyArray<number>>, B: ReadonlyArray<ReadonlyArray<number>>): number[][];
+  function aug(A: number[][], B: number[][]): number[][];
 
   /**
    * Returns the determinant of a square matrix (recursive Laplace expansion).
@@ -101,7 +111,7 @@ declare namespace jStat {
    * @param A A square matrix.
    * @returns The determinant.
    */
-  function det(A: ReadonlyArray<ReadonlyArray<number>>): number;
+  function det(A: number[][]): number;
 
   /**
    * Returns the inverse of a square matrix using Gauss-Jordan elimination.
@@ -109,7 +119,7 @@ declare namespace jStat {
    * @param A A square matrix.
    * @returns A⁻¹.
    */
-  function inv(A: ReadonlyArray<ReadonlyArray<number>>): number[][];
+  function inv(A: number[][]): number[][];
 
   /**
    * Solves Ax = b using Gaussian elimination with partial pivoting
@@ -119,10 +129,7 @@ declare namespace jStat {
    * @param b Right-hand-side vector (n) or matrix (n × m).
    * @returns The solution vector (n) or matrix.
    */
-  function gauss_elimination(
-    A: ReadonlyArray<ReadonlyArray<number>>,
-    b: ReadonlyArray<number> | ReadonlyArray<ReadonlyArray<number>>
-  ): number[];
+  function gauss_elimination(A: number[][], b: number[] | number[][]): number[];
 
   /**
    * Augments A with B and performs Gauss-Jordan elimination.
@@ -131,10 +138,7 @@ declare namespace jStat {
    * @param B Right-hand-side matrix (n × m).
    * @returns The full reduced matrix of shape n × (n + m).
    */
-  function gauss_jordan(
-    A: ReadonlyArray<ReadonlyArray<number>>,
-    B: ReadonlyArray<ReadonlyArray<number>>
-  ): number[][];
+  function gauss_jordan(A: number[][], B: number[][]): number[][];
 
   /**
    * Solves Ax = b using the Gauss-Jacobi iterative method.
@@ -146,12 +150,7 @@ declare namespace jStat {
    * @param tol Tolerance (default 1e-6).
    * @returns The solution vector.
    */
-  function gauss_jacobi(
-    A: ReadonlyArray<ReadonlyArray<number>>,
-    b: ReadonlyArray<number>,
-    x0: number[],
-    tol?: number
-  ): number[];
+  function gauss_jacobi(A: number[][], b: number[][], x0: number[][], tol?: number): number[];
 
   /**
    * Solves Ax = b using the Gauss-Seidel iterative method.
@@ -163,12 +162,7 @@ declare namespace jStat {
    * @param tol Tolerance (default 1e-6).
    * @returns The solution vector.
    */
-  function gauss_seidel(
-    A: ReadonlyArray<ReadonlyArray<number>>,
-    b: ReadonlyArray<number>,
-    x0: number[],
-    tol?: number
-  ): number[];
+  function gauss_seidel(A: number[][], b: number[][], x0: number[][], tol?: number): number[];
 
   /**
    * Solves Ax = b using successive over-relaxation (SOR).
@@ -180,13 +174,7 @@ declare namespace jStat {
    * @param omega Relaxation parameter (ω).
    * @returns The solution vector or matrix.
    */
-  function SOR(
-    A: ReadonlyArray<ReadonlyArray<number>>,
-    b: ReadonlyArray<number> | ReadonlyArray<ReadonlyArray<number>>,
-    x0: number[] | ReadonlyArray<ReadonlyArray<number>>,
-    tol: number,
-    omega: number
-  ): number[] | number[][];
+  function SOR(A: number[][], b: number[] | number[][], x0: number[] | number[][], tol: number, omega: number): number[] | number[][];
 
   /**
    * Solves a least-squares problem min‖Ax − b‖₂ via QR decomposition.
@@ -195,14 +183,8 @@ declare namespace jStat {
    * @param b Right-hand-side vector (m) or matrix (m × k).
    * @returns The least-squares solution (n) or (n × k).
    */
-  function lstsq(
-    A: ReadonlyArray<ReadonlyArray<number>>,
-    b: ReadonlyArray<number>
-  ): number[];
-  function lstsq(
-    A: ReadonlyArray<ReadonlyArray<number>>,
-    b: ReadonlyArray<ReadonlyArray<number>>
-  ): number[][];
+  function lstsq(A: number[][], b: number[]): number[];
+  function lstsq(A: number[][], b: number[][]): number[][];
 
   /**
    * Returns the LU decomposition: L × U = A where L is lower-triangular
@@ -211,7 +193,7 @@ declare namespace jStat {
    * @param A An n × n matrix.
    * @returns A tuple [L, U].
    */
-  function lu(A: ReadonlyArray<ReadonlyArray<number>>): [number[][], number[][]];
+  function lu(A: number[][]): [number[][], number[][]];
 
   /**
    * Returns the Cholesky decomposition: A = T × T′ where T is lower-triangular.
@@ -219,7 +201,7 @@ declare namespace jStat {
    * @param A A symmetric positive-definite n × n matrix.
    * @returns The lower-triangular Cholesky factor T.
    */
-  function cholesky(A: ReadonlyArray<ReadonlyArray<number>>): number[][];
+  function cholesky(A: number[][]): number[][];
 
   /**
    * Applies Householder reflections to reduce a matrix to upper-Hessenberg form.
@@ -227,7 +209,7 @@ declare namespace jStat {
    * @param A An m × n matrix.
    * @returns The transformed matrix.
    */
-  function householder(A: ReadonlyArray<ReadonlyArray<number>>): number[][];
+  function householder(A: number[][]): number[][];
 
   /**
    * Returns the QR decomposition: Q × R = A where Q is orthogonal and R is upper-triangular.
@@ -235,7 +217,7 @@ declare namespace jStat {
    * @param A An m × n matrix.
    * @returns A tuple [Q, R].
    */
-  function QR(A: ReadonlyArray<ReadonlyArray<number>>): [number[][], number[][]];
+  function QR(A: number[][]): [number[][], number[][]];
 
   /**
    * Returns eigenvalues and eigenvectors via the Jacobi eigenvalue algorithm.
@@ -243,9 +225,7 @@ declare namespace jStat {
    * @param A A real symmetric n × n matrix.
    * @returns A tuple [eigenvectors, eigenvalues].
    */
-  function jacobi(
-    A: ReadonlyArray<ReadonlyArray<number>>
-  ): [eigenvectors: number[][], eigenvalues: number[]];
+  function jacobi(A: number[][]): [eigenvectors: number[][], eigenvalues: number[]];
 
   /**
    * Raises every entry of a vector or matrix to the given power.
@@ -298,7 +278,7 @@ declare namespace jStat {
   function rungekutta(f: (t: number, u: number) => number, h: number, tn: number, t0: number, y0: number, order: 2 | 4): number;
   /**
    * Approximates the definite integral of a function using Romberg integration.
-   * * Note: Due to the internal implementation, this function returns an array 
+   * * Note: Due to the internal implementation, this function returns an array
    * containing the final calculated scalar value (e.g., `[result]`), not a raw number.
    * * @param f The continuous function to integrate, taking a single parameter x.
    * @param a The lower limit of integration.
@@ -309,7 +289,7 @@ declare namespace jStat {
   function romberg(f: (x: number) => number, a: number, b: number, order: number): [number];
   /**
    * Approximates the second derivative of a function using Richardson extrapolation.
-   * * Note: Due to the internal implementation, this function returns an array 
+   * * Note: Due to the internal implementation, this function returns an array
    * containing the final calculated scalar value (e.g., `[result]`), not a raw number.
    * * @param X Array of discrete x-coordinates.
    * @param f Array of function values corresponding to X.
@@ -350,8 +330,8 @@ declare namespace jStat {
 
   /**
    * Evaluates a natural cubic spline interpolation at a given point.
-   * BUG IN JSTAT SOURCE: This function will crash at runtime 
-   * due to an uninitialized matrix index (`A[0]`) passed to `jStat.inv`. 
+   * BUG IN JSTAT SOURCE: This function will crash at runtime
+   * due to an uninitialized matrix index (`A[0]`) passed to `jStat.inv`.
    * Do not use this method unless you have monkey-patched the jStat source code.
    * @param X Array of discrete x-coordinates (must be strictly increasing).
    * @param F Array of function values (y-coordinates) corresponding to X.
@@ -364,13 +344,7 @@ declare namespace jStat {
    * Approximates an integral with Gaussian quadrature.
    * @deprecated Not implemented — throws at runtime.
    */
-  function gauss_quadrature(
-    f: (x: number) => number,
-    a: number,
-    b: number,
-    n?: number
-  ): never;
-
+  function gauss_quadrature(f: (x: number) => number, a: number, b: number, n?: number): never;
 
   /**
    * Performs Principal Component Analysis (PCA) on a given data matrix.
@@ -381,10 +355,5 @@ declare namespace jStat {
    * - `[2]`: The corresponding transposed eigenvectors `Vt` (2D array).
    * - `[3]`: The projected data / principal components `Y` (2D array).
    */
-  function PCA(X: number[][]): [
-    X: number[][],
-    D: number[],
-    Vt: number[][],
-    Y: number[][]
-  ];
+  function PCA(X: number[][]): [X: number[][], D: number[], Vt: number[][], Y: number[][]];
 }
