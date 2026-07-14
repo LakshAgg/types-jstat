@@ -23,6 +23,7 @@ declare namespace jStat {
    */
   function add(A: Array1D, B: number | Array1D): number[];
   function add(A: Array2D, B: number | Array2D): number[][];
+  function add(A: number[][], B: number | Array2D): number[][] | number[];
   function add(A: number[][] | number[], B: number | number[][] | number[]): number[][] | number[];
 
   /**
@@ -34,6 +35,7 @@ declare namespace jStat {
    */
   function subtract(A: Array1D, B: number | Array1D): number[];
   function subtract(A: Array2D, B: number | Array2D): number[][];
+  function subtract(A: number[][], B: number | Array2D): number[][] | number[];
   function subtract(A: number[][] | number[], B: number | number[][] | number[]): number[][] | number[];
 
   /**
@@ -45,6 +47,7 @@ declare namespace jStat {
    */
   function divide(A: Array1D, B: number): number[];
   function divide(A: Array2D, B: number): number[][];
+  function divide(A: number[][], B: number): number[][] | number[];
   function divide(A: Array1D | Array2D, B: Array1D | Array2D): number | number[] | number[][];
 
   /**
@@ -55,8 +58,10 @@ declare namespace jStat {
    * @param B The right operand — either a scalar or a matrix.
    * @returns A × B.
    */
+  function multiply(A: number, B: number): number;
   function multiply(A: Array1D, B: number): number[];
   function multiply(A: Array2D, B: number): number[][];
+  function multiply(A: number[][], B: number): number[][] | number[];
   function multiply<const A extends [NArray<number, number>], N extends number = A[0]["length"]>(A: A, B: Matrix<N, 1>): number;
   function multiply<const TA extends RawMatrix<number, number>, N extends number = TA[0]["length"]>(A: TA, B: Matrix<N, number>): number[][];
 

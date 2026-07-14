@@ -23,6 +23,7 @@
         "test/core-tests.ts",
         "test/vector-tests.ts",
         "test/algebra-tests.ts",
-        "test/jstat-tests.ts"
+        "test/jstat-tests.ts",
+        "test/tests-tests.ts"
     ]
 }

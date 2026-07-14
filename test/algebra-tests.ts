@@ -44,6 +44,7 @@ assertNumber(jStat.divide([[1]], [[1]]) as number, 'jStat.divide(mat, mat)');
 // Vector + vector (divide)
 assertMatrix(jStat.divide([4, 6], [2, 3]) as number[][], 'jStat.divide(vec, vec)');
 
+assertNumber(jStat.multiply(45, 30), 'jStat.multiply(s, s) → scalar');
 // multiply vec × col → scalar
 assertNumber(jStat.multiply([[1, 2]], [[3], [4]]), 'jStat.multiply(vec, vec) → scalar');
 assertMatrix(jStat.multiply([[1], [2], [3]], [[3, 4, 3]]), 'jStat.multiply(vec, vec) → scalar');

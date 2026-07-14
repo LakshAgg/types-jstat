@@ -299,15 +299,28 @@ declare namespace jStat {
 
         // -- Statistical Tests instance methods --
         /** Returns the z-score for the current object values. */
-        zscore(value: number, flag?: boolean): JStat;
+        zscore(value: number, flag?: boolean): number;
         /** Returns the p-value of a z-test for the current object values. */
-        ztest(value: number, sides?: 1 | 2, flag?: boolean): JStat;
+        ztest(value: number, sides?: 1 | 2, flag?: boolean): number;
         /** Returns the t-score for the current object values. */
-        tscore(value: number): JStat;
+        tscore(value: number): number;
         /** Returns the p-value of a t-test for the current object values. */
-        ttest(value: number, sides?: 1 | 2): JStat;
+        ttest(value: number, sides?: 1 | 2): number;
         /** Returns the F-score of the current object's groups. */
         anovafscore(): number;
+        /** Returns the p-value of an ANOVA test for the current object's groups. */
+        anovaftes(): number;
+
+        /** Returns the p-value of a one-sided difference of proportions test. */
+        oneSidedDifferenceOfProportions(p1: number, n1: number, p2: number, n2: number): number;
+        /** Returns the p-value of a two-sided difference of proportions test. */
+        twoSidedDifferenceOfProportions(p1: number, n1: number, p2: number, n2: number): number;
+        /** Confidence interval using the normal distribution. */
+        normalci(value: number, alpha: number): number[];
+        /** Confidence interval using the t-distribution. */
+        tci(value: number, alpha: number): number[];
+
+        anovaftes(): number;
 
         // -- Distribution instance methods --
         beta(alpha: number, beta: number): ContinuousDistribution<JStat>;
@@ -331,19 +344,9 @@ declare namespace jStat {
         hypgeom(N: number, m: number, n: number): DiscreteBasic;
         poisson(lambda: number): PoissonInstance;
 
-        // -- Proportion test instance methods (from test.js) --
-        /** Returns the p-value of a one-sided difference of proportions test. */
-        oneSidedDifferenceOfProportions(p1: number, n1: number, p2: number, n2: number): number;
-        /** Returns the p-value of a two-sided difference of proportions test. */
-        twoSidedDifferenceOfProportions(p1: number, n1: number, p2: number, n2: number): number;
-
         // -- Utility / missing instance methods --
         /** Returns a plain JavaScript array (or array of arrays) from the instance. */
         toArray(): number[] | number[][];
-        /** Confidence interval using the normal distribution. */
-        normalci(value: number, alpha: number): number[];
-        /** Confidence interval using the t-distribution. */
-        tci(value: number, alpha: number): number[];
     }
 
     type JStat<T extends number[][] = number[][]> = jStat<T>;
