@@ -375,8 +375,8 @@ const randnMatrix: number[][] = jStat.randn(3, 3);
 assertMatrix(randnMatrix, 'jStat.randn(matrix)');
 const randg: number = jStat.randg(2);
 assertNumber(randg, 'jStat.randg');
-const randgMatrix: number[][] = jStat.randg(2, 3, 3);
-assertMatrix(randgMatrix, 'jStat.randg(matrix)');
+const randgMatrixJstat  = jStat.randg(2, 3, 3);
+assertInstanceOf(randgMatrixJstat, jStat.jStat, 'jStat.randg(matrix)');
 
 // -------------------------------------------------------------------------
 // Linear Algebra static method tests

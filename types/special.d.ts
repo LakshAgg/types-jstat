@@ -70,6 +70,14 @@ declare namespace jStat {
   function gammaln(x: number): number;
 
   /**
+   * Returns the natural logarithm of the Gamma function.
+   *
+   * @param x The input value.
+   * @returns ln(Γ(x)).
+   */
+  function loggam(x: number): number;
+
+  /**
    * Returns the lower incomplete gamma function γ(a, x) = ∫₀ˣ tᵃ⁻¹ e⁻ᵗ dt.
    *
    * @param a The shape parameter.
@@ -120,6 +128,15 @@ declare namespace jStat {
    * @returns n! / (m! × (n − m)!).
    */
   function combination(n: number, m: number): number;
+  
+  /**
+   * Returns the natural logarithm of the number of combinations of n items taken m at a time (n choose m).
+   *
+   * @param n The total number of items.
+   * @param m The number of items to choose.
+   * @returns ln(n! / (m! × (n − m)!).)
+   */
+  function combinationln(n: number, m: number): number;
 
   /**
    * Returns the number of permutations of n items taken m at a time.
@@ -187,5 +204,5 @@ declare namespace jStat {
    * @param m Number of columns (defaults to n).
    * @returns An n × m matrix of random values from Gamma(α, 1).
    */
-  function randg(shape: number, n: number, m?: number): number[][];
+  function randg(shape: number, n: number, m?: number): JStat;
 }

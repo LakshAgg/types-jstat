@@ -253,23 +253,14 @@ declare namespace jStat {
         percentileOfScore(score: number, kind: 'strict' | 'weak', callback: (value: number | number[]) => void): this;
 
         // -- Special Functions instance methods --
-        betafn(y: number, callback?: (value: number) => void): JStat;
-        betaln(y: number, callback?: (value: number) => void): JStat;
-        betacf(a: number, b: number, callback?: (value: number) => void): JStat;
-        ibetainv(a: number, b: number, callback?: (value: number) => void): JStat;
-        ibeta(a: number, b: number, callback?: (value: number) => void): JStat;
-        gammafn(callback?: (value: number) => void): JStat;
-        gammaln(callback?: (value: number) => void): JStat;
-        lowRegGamma(x: number, callback?: (value: number) => void): JStat;
-        gammapinv(a: number, callback?: (value: number) => void): JStat;
-        factorialln(callback?: (value: number) => void): JStat;
-        factorial(callback?: (value: number) => void): JStat;
-        combination(m: number, callback?: (value: number) => void): JStat;
-        permutation(m: number, callback?: (value: number) => void): JStat;
-        randn(callback?: (value: number) => void): JStat;
-        randn(n: number, m?: number, callback?: (value: number | number[][]) => void): JStat;
-        randg(callback?: (value: number) => void): JStat;
-        randg(shape: number, n?: number, m?: number, callback?: (value: number | number[][]) => void): JStat;
+        gammafn(): JStat;
+        gammaln(): JStat;
+
+        factorialln(): JStat;
+        factorial(): JStat;
+
+        randn(): number;
+        randn(row: number, cols?: number): JStat;
 
         // -- Linear Algebra instance methods --
         add(arg: T | JStat<T> | number): JStat<T>;
