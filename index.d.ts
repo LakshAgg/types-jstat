@@ -18,11 +18,27 @@
  * const chain = jStat([1, 2, 3, 4, 5]).sum(() => {}).mean();
  * ```
  */
-declare function jStat(...data: number[]): jStat.JStat;
-declare function jStat(data: number[] | number[][]): jStat.JStat;
-declare function jStat(start: number, stop: number, count: number, fn?: (value: number, index: number) => number): jStat.JStat;
-declare function jStat(array: number[] | number[][], fn: (value: number) => number): jStat.JStat;
+declare function jStat<T extends number[] | [number[]] | [number[], ...number[][]] | number[][]>(data: T): jStat.JStat<InferJStatType<T>>;
+declare function jStat(start: number, stop: number, count: number, fn?: (value: number, index: number) => number): jStat.JStat<[number[]]>;
+declare function jStat<T extends number[] | [number[]] | [number[], ...number[][]] | number[][]>(array: T, fn: (value: number, row: number, col: number) => number): jStat.JStat<InferJStatType<T>>;
 declare function jStat(): jStat.JStat;
+
+
+type InferJStatType<T extends number[] | number[][]> = 
+  T extends number[] 
+    ? [number[]] 
+    : T extends [number[]] 
+      ? [number[]] 
+      : T extends [number[], ...number[][]] 
+        ? T 
+        : number[][];
+
+type SingleResponse<T extends number[][]> = 
+  T extends [number[]] 
+    ? number 
+    : T extends [number[], ...number[][]] 
+      ? number[] 
+      : number | number[];
 
 declare namespace jStat {
 
@@ -46,171 +62,193 @@ declare namespace jStat {
     // JStat instance interface
     // -------------------------------------------------------------------------
 
-    class jStat {
-        [index: number]: any;
+    class jStat<T extends number[][] = number[][]> {
+        [index: number]: T[number];
+        length: number;
 
         // -- Core instance methods --
+        row(index: number | number[]): JStat<[number[]]>;
+        row(index: number | number[], callback: (value: JStat) => void): this;
+        col(index: number | number[]): JStat<[number][]>;
+        col(index: number | number[], callback: (value: JStat) => void): this;
+
+        map(fn: (value: number, row: number, col: number) => number, modify?: boolean): JStat<T>;
+        cumreduce(fn: (accumulator: number, current: number) => number, modify?: boolean): JStat<T>;
+        alter(fn: (value: number, row: number, col: number) => number): this;
+        
         rows(): number;
-        rows(callback: (value: number) => void): JStat;
+        rows(callback: (value: number) => void): this;
         cols(): number;
-        cols(callback: (value: number) => void): JStat;
+        cols(callback: (value: number) => void): this;
         dimensions(): DimensionsResult;
-        dimensions(callback: (value: DimensionsResult) => void): JStat;
+        dimensions(callback: (value: DimensionsResult) => void): this;
+        symmetric(): boolean;
+        symmetric(callback: (value: boolean) => void): this;
+        clear(callback?: () => void): this;
+        
+        diag(): JStat;
+        diag(callback: (value: JStat) => void): this;
+        antidiag(): JStat;
+        antidiag(callback: (value: JStat) => void): this;
+        transpose(): JStat;
+        transpose(callback: (value: JStat) => void): this;
 
-        // Slice overloads matching source dispatch logic:
-        // slice({ row: N, col: N }) → single cell
-        // slice({ row: N })          → row slice
-        // slice({ col: N })          → column slice
-        // slice({ row, col })        → sub-matrix
-        // slice({}) / slice()        → deep copy
-        slice(opts?: { row?: SliceOptions | number; col?: SliceOptions | number }): number[][] | number[] | number;
-
-        row(index: number | number[], callback?: (value: JStat) => void): JStat;
-        col(index: number | number[], callback?: (value: JStat) => void): JStat;
-        diag(): number[][];
-        diag(callback: (value: number[][]) => void): JStat;
-        antidiag(): number[][];
-        antidiag(callback: (value: number[][]) => void): JStat;
-        transpose(): number[][];
-        transpose(callback: (value: number[][]) => void): JStat;
-        map(fn: (value: number) => number): JStat;
-        cumreduce(fn: (accumulator: number, current: number) => number): JStat;
-        alter(fn: (value: number) => number): JStat;
         create(row: number, fn: (row: number, col: number) => number): JStat;
         create(row: number, col: number, fn: (row: number, col: number) => number): JStat;
         zeros(row: number, col?: number): JStat;
         ones(row: number, col?: number): JStat;
         rand(row: number, col?: number): JStat;
         identity(row: number, col?: number): JStat;
-        clear(callback?: () => void): JStat;
-        symmetric(): boolean;
-        symmetric(callback: (value: boolean) => void): JStat;
-        // ---- Properties ----
-        length: 1;
 
         // -- Vector instance methods --
-        sum(): number[] | number;
-        sum(callback: (value: number) => void): JStat;
-        sum(flatten: true): number;
-        sum(flatten: true, callback?: (value: number) => void): JStat;
+        sum(): SingleResponse<T>;
+        sum(callback: (value: SingleResponse<T>) => void): this;
+        sum(flatten: true,): number;
+        sum(flatten: true, callback: (value: number) => void): this;
 
-        sumsqrd(): number | number[];
-        sumsqrd(callback?: (value: number) => void): JStat;
-        sumsqrd(flatten: true, callback: (value: number) => void): JStat;
-        sumsqrd(flatten: true): number;
+        sumsqrd(): SingleResponse<T>;
+        sumsqrd(callback: (value: SingleResponse<T>) => void): this;
+        sumsqrd(flatten: true,): number;
+        sumsqrd(flatten: true, callback: (value: number) => void): this;
 
-        sumsqerr(): number | number[];
-        sumsqerr(callback?: (value: number) => void): JStat;
-        sumsqerr(flatten: true, callback: (value: number) => void): JStat;
-        sumsqerr(flatten: true): number;
+        sumsqerr(): SingleResponse<T>;
+        sumsqerr(callback: (value: SingleResponse<T>) => void): this;
+        sumsqerr(flatten: true,): number;
+        sumsqerr(flatten: true, callback: (value: number) => void): this;
 
-        sumrow(): number | number[];
-        sumrow(callback?: (value: number) => void): JStat;
-        sumrow(flatten: true, callback: (value: number) => void): JStat;
-        sumrow(flatten: true): number;
+        sumrow(): SingleResponse<T>;
+        sumrow(callback: (value: SingleResponse<T>) => void): this;
+        sumrow(flatten: true,): number;
+        sumrow(flatten: true, callback: (value: number) => void): this;
 
-        product(): number | number[];
-        product(callback?: (value: number) => void): JStat;
-        product(flatten: true, callback: (value: number) => void): JStat;
-        product(flatten: true): number;
+        product(): SingleResponse<T>;
+        product(callback: (value: SingleResponse<T>) => void): this;
+        product(flatten: true,): number;
+        product(flatten: true, callback: (value: number) => void): this;
 
-        min(): number | number[];
-        min(callback?: (value: number) => void): JStat;
-        min(flatten: true, callback: (value: number) => void): JStat;
-        min(flatten: true): number;
+        min(): SingleResponse<T>;
+        min(callback: (value: SingleResponse<T>) => void): this;
+        min(flatten: true,): number;
+        min(flatten: true, callback: (value: number) => void): this;
 
-        max(): number | number[];
-        max(callback?: (value: number) => void): JStat;
-        max(flatten: true, callback: (value: number) => void): JStat;
-        max(flatten: true): number;
+        max(): SingleResponse<T>;
+        max(callback: (value: SingleResponse<T>) => void): this;
+        max(flatten: true,): number;
+        max(flatten: true, callback: (value: number) => void): this;
 
-        mean(): number[] | number;
-        mean(callback: (value: number) => void): JStat;
-        mean(flatten: true): number;
-        mean(flatten: true, callback: (value: number) => void): JStat;
+        mean(): SingleResponse<T>;
+        mean(callback: (value: SingleResponse<T>) => void): this;
+        mean(flatten: true,): number;
+        mean(flatten: true, callback: (value: number) => void): this;
 
-        meansqerr(): number | number[];
-        meansqerr(callback: (value: number) => void): JStat;
+        meansqerr(): SingleResponse<T>;
+        meansqerr(callback: (value: SingleResponse<T>) => void): this;
         meansqerr(flatten: true,): number;
-        meansqerr(flatten: true, callback: (value: number) => void): JStat;
+        meansqerr(flatten: true, callback: (value: number) => void): this;
 
-        geomean(): number | number[];
-        geomean(callback: (value: number) => void): JStat;
+        geomean(): SingleResponse<T>;
+        geomean(callback: (value: SingleResponse<T>) => void): this;
         geomean(flatten: true,): number;
-        geomean(flatten: true, callback: (value: number) => void): JStat;
+        geomean(flatten: true, callback: (value: number) => void): this;
 
-        median(): number | number[];
-        median(callback: (value: number) => void): JStat;
+        median(): SingleResponse<T>;
+        median(callback: (value: SingleResponse<T>) => void): this;
         median(flatten: true,): number;
-        median(flatten: true, callback: (value: number) => void): JStat;
+        median(flatten: true, callback: (value: number) => void): this;
 
-        cumsum(): number | number[];
-        cumsum(callback: (value: number[]) => void): JStat;
-        cumsum(flatten: true,): number;
-        cumsum(flatten: true, callback: (value: number[]) => void): JStat;
+        cumsum(): number[] | number[][];
+        cumsum(callback: (value: number[] | number[][]) => void): this;
+        cumsum(flatten: true,): number[] | number[][];
+        cumsum(flatten: true, callback: (value: number[] | number[][]) => void): this;
 
         cumprod(): number | number[];
-        cumprod(callback: (value: number[]) => void): JStat;
-        cumprod(flatten: true,): number;
-        cumprod(flatten: true, callback: (value: number[]) => void): JStat;
+        cumprod(callback: (value: number | number[]) => void): this;
+        cumprod(flatten: true,): number[] | number[][];
+        cumprod(flatten: true, callback: (value: number[] | number[][]) => void): this;
 
-        diff(): number | number[];
-        diff(callback: (value: number[]) => void): JStat;
-        diff(flatten: true,): number;
-        diff(flatten: true, callback: (value: number[]) => void): JStat;
+        diff(): number[] | number[][];
+        diff(callback: (value: number[] | number[][]) => void): this;
+        diff(flatten: true,): number[];
+        diff(flatten: true, callback: (value: number[]) => void): this;
 
-        rank(): number | number[];
-        rank(callback: (value: number[]) => void): JStat;
-        rank(flatten: true,): number;
-        rank(flatten: true, callback: (value: number[]) => void): JStat;
+        rank(): number[] | number[][];
+        rank(callback: (value: number[] | number[][]) => void): this;
+        rank(flatten: true,): number[];
+        rank(flatten: true, callback: (value: number[]) => void): this;
 
-        mode(): number | number[];
-        mode(callback: (value: number | number[] | false) => void): JStat;
-        mode(flatten: true,): number;
-        mode(flatten: true, callback: (value: number | number[] | false) => void): JStat;
+        mode(): number | number[] | (number | number[])[];
+        mode(callback: (value: number | number[] | (number | number[])[]) => void): this;
+        mode(flatten: true,): number | number[];
+        mode(flatten: true, callback: (value: number | number[]) => void): this;
 
-        range(): number | number[];
-        range(callback: (value: number) => void): JStat;
+        range(): SingleResponse<T>;
+        range(callback: (value: SingleResponse<T>) => void): this;
         range(flatten: true,): number;
-        range(flatten: true, callback: (value: number) => void): JStat;
+        range(flatten: true, callback: (value: number) => void): this;
 
-        variance(): number | number[];
-        variance(callback: (value: number) => void): JStat;
+        variance(): SingleResponse<T>;
+        variance(callback: (value: SingleResponse<T>) => void): this;
         variance(flatten: true,): number;
-        variance(flatten: true, callback: (value: number) => void): JStat;
+        variance(flatten: true, callback: (value: number) => void): this;
 
-        deviation(): number | number[] | number[][];
-        deviation(callback: (value: number[]) => void): JStat;
-        deviation(flatten: true,): number | number[];
-        deviation(flatten: true, callback: (value: number[]) => void): JStat;
+        deviation(): number[] | number[][];
+        deviation(callback: (value: number[] | number[][]) => void): this;
+        deviation(flatten: true,): number[];
+        deviation(flatten: true, callback: (value: number[]) => void): this;
 
-        stdev(): number | number[];
-        stdev(callback: (value: number) => void): JStat;
+        stdev(): SingleResponse<T>;
+        stdev(callback: (value: SingleResponse<T>) => void): this;
         stdev(flatten: true,): number;
-        stdev(flatten: true, callback: (value: number) => void): JStat;
+        stdev(flatten: true, callback: (value: number) => void): this;
 
-        meandev(): number | number[];
-        meandev(callback: (value: number) => void): JStat;
+        meandev(): SingleResponse<T>;
+        meandev(callback: (value: SingleResponse<T>) => void): this;
         meandev(flatten: true,): number;
-        meandev(flatten: true, callback: (value: number) => void): JStat;
+        meandev(flatten: true, callback: (value: number) => void): this;
+        
+        skewness(): SingleResponse<T>;
+        skewness(callback: (value: SingleResponse<T>) => void): this;
+        skewness(flatten: true,): number;
+        skewness(flatten: true, callback: (value: number) => void): this;
 
-        meddev(): number | number[];
-        meddev(callback: (value: number) => void): JStat;
+        kurtosis(): SingleResponse<T>;
+        kurtosis(callback: (value: SingleResponse<T>) => void): this;
+        kurtosis(flatten: true,): number;
+        kurtosis(flatten: true, callback: (value: number) => void): this;
+
+        meddev(): SingleResponse<T>;
+        meddev(callback: (value: SingleResponse<T>) => void): this;
         meddev(flatten: true,): number;
-        meddev(flatten: true, callback: (value: number) => void): JStat;
+        meddev(flatten: true, callback: (value: number) => void): this;
 
-        coeffvar(): number | number[];
-        coeffvar(callback: (value: number) => void): JStat;
+        coeffvar(): SingleResponse<T>;
+        coeffvar(callback: (value: SingleResponse<T>) => void): this;
         coeffvar(flatten: true,): number;
-        coeffvar(flatten: true, callback: (value: number) => void): JStat;
+        coeffvar(flatten: true, callback: (value: number) => void): this;
+        
+        histogram(): number[] | number[][];
+        histogram(callback: (value: number[] | number[][]) => void): this;
+        histogram(flatten: true,): number[];
+        histogram(flatten: true, callback: (value: number[]) => void): this;
+        
+        quartiles(): number[] | number[][];
+        quartiles(callback: (value: number[] | number[][]) => void): this;
+        quartiles(flatten: true,): number[];
+        quartiles(flatten: true, callback: (value: number[]) => void): this;
+        
+        unique(): number[] | number[][];
+        unique(callback: (value: number[] | number[][]) => void): this;
+        unique(flatten: true,): number[];
+        unique(flatten: true, callback: (value: number[]) => void): this;
+        
+        quantiles(quantilesArray: ReadonlyArray<number>, alphap?: number, betap?: number): number[] | number[][];
+        quantiles(quantilesArray: ReadonlyArray<number>, callback: (value: number[] | number[][]) => void): this;
+        quantiles(quantilesArray: ReadonlyArray<number>, alphap: number, callback: (value: number[] | number[][]) => void): this;
+        quantiles(quantilesArray: ReadonlyArray<number>, alphap: number, betap: number, callback: (value: number[] | number[][]) => void): this;
 
-        quartiles(callback?: (value: number[]) => void): JStat;
-        quantiles(quantilesArray: ReadonlyArray<number>, alphap?: number, betap?: number, callback?: (value: number[]) => void): JStat;
-        percentile(k: number, exclusive?: boolean, callback?: (value: number) => void): JStat;
-        percentileOfScore(score: number, kind?: 'strict' | 'weak', callback?: (value: number) => void): JStat;
-        histogram(numBins?: number, callback?: (value: number[]) => void): JStat;
-        covariance(other: JStat | ReadonlyArray<number>, callback?: (value: number) => void): JStat;
-        unique(): number[];
+        percentileOfScore(score: number, kind?: 'strict' | 'weak'): number | number[];
+        percentileOfScore(score: number, callback: (value: number | number[]) => void): this;
+        percentileOfScore(score: number, kind: 'strict' | 'weak', callback: (value: number | number[]) => void): this;
 
         // -- Special Functions instance methods --
         betafn(y: number, callback?: (value: number) => void): JStat;
@@ -293,7 +331,7 @@ declare namespace jStat {
         tci(value: number, alpha: number): number[];
     }
 
-    type JStat = jStat;
+    type JStat<T extends number[][] = number[][]> = jStat<T>;
 }
 
 declare module 'jstat' {
