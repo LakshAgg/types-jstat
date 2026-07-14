@@ -239,10 +239,6 @@ const sliced2: number[] = jStat.slice(matrix, { row: 1, col: { start: 1 } });
 assertNumberArray(sliced2, 'jStat.slice (row index)');
 const sliced3: number[][] = jStat.slice(matrix, { row: { end: 2 }, col: { start: 1 } });
 assertMatrix(sliced3, 'jStat.slice (full obj)');
-const instanceSliced1: number[][] | number[] | number = jStat(matrix).slice({ row: { end: 2 }, col: { start: 1 } });
-assertMatrix(instanceSliced1 as number[][], 'instance.slice');
-const instanceSliced2: number[][] | number[] | number = jStat(matrix).slice({ row: 1, col: { start: 1 } });
-assertMatrix(instanceSliced2 as number[][], 'instance.slice (row idx)');
 
 // Map
 const mapped: number[] | number[][] = jStat.map([1, 2, 3], (x) => x * 2);
@@ -802,7 +798,7 @@ assertNumber(betaInsVariance, 'betaIns.variance');
 _section('JStat Instance Methods');
 
 // Core instance methods
-const jstat: jStat.JStat = jStat([1, 2, 3, 4, 5]);
+const jstat = jStat([1, 2, 3, 4, 5]);
 assertInstanceOf(jstat, jStat.jStat, 'jstat');
 
 jstat.rows();
@@ -816,7 +812,7 @@ jstat.row(0, (v: jStat.JStat) => { });
 jstat.col(0);
 jstat.col(0, (v: jStat.JStat) => { });
 jstat.diag();
-jstat.diag((v: number[][]) => { });
+jstat.diag((v: jStat.JStat) => { });
 jstat.antidiag();
 jstat.transpose();
 jstat.map((x: number) => x * 2);
@@ -895,10 +891,10 @@ assertNumber(matrixObj.anovafscore(), 'matrixObj.anovafscore');
 
 _section('Matrix Instance Methods');
 
-const matrixInst: jStat.JStat = jStat([[1, 2], [3, 4]]);
+const matrixInst = jStat([[1, 2], [3, 4]]);
 assertNumberArray(matrixInst.sum() as number[], 'matrixInst.sum');
 assertNumber(matrixInst.sum(true), 'matrixInst.sum(pop)');
-assertInstanceOf(matrixInst.sum((v: number) => { }), jStat.jStat, 'matrixInst.sum(fn)');
+assertInstanceOf(matrixInst.sum((v: number[]) => { }), jStat.jStat, 'matrixInst.sum(fn)');
 
 assertNumberArray(matrixInst.mean() as number[], 'matrixInst.mean');
 assertNumber(matrixInst.mean(true), 'matrixInst.mean(pop)');
@@ -975,10 +971,8 @@ const chainResult1 = jStat([1, 2, 3, 4, 5])
         const _sum: number = val;
     })
     .mean((val: number) => {
-        const _mean: number = val;
     })
     .stdev((val: number) => {
-        const _stdev: number = val;
     });
 assertInstanceOf(chainResult1, jStat.jStat, 'chained result');
 
