@@ -192,6 +192,35 @@ declare namespace jStat {
   function lstsq(A: number[][], b: number[][]): number[][];
 
   /**
+   * Solves Ax = b where A is an upper-triangular matrix using back substitution.
+   *
+   * @param A An n × n upper-triangular coefficient matrix.
+   * @param b The right-hand side. When a flat vector, returns a flat solution
+   *   vector. When a column matrix, returns a column matrix.
+   * @returns The solution vector x.
+   *
+   * @example
+   * ```typescript
+   * const A = [[1, 2, 3], [0, 4, 5], [0, 6, 7]];
+   * const b = [1, 2, 3];
+   * jStat.triaUpSolve(A, b); // → [2.67, 0.17, 1.67]
+   * ```
+   */
+  function triaUpSolve(A: number[][] | JStat, b: number[]): number[];
+  function triaUpSolve(A: number[][] | JStat, b: number[][] | JStat): number[][];
+
+  /**
+   * Solves Ax = b where A is a lower-triangular matrix using forward substitution.
+   *
+   * @param A An n × n lower-triangular coefficient matrix.
+   * @param b The right-hand side. When a flat vector, returns a flat solution
+   *   vector. When a column matrix, returns a column matrix.
+   * @returns The solution vector x.
+   */
+  function triaLowSolve(A: number[][] | JStat, b: number[]): number[];
+  function triaLowSolve(A: number[][] | JStat, b: number[][] | JStat): number[][];
+
+  /**
    * Returns the LU decomposition: L × U = A where L is lower-triangular
    * and U is upper-triangular.
    *

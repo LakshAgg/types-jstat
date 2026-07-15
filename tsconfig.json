@@ -26,6 +26,7 @@
         "test/jstat-tests.ts",
         "test/tests-tests.ts",
         "test/special-tests.ts",
-        "test/distribution-tests.ts"
+        "test/distribution-tests.ts",
+        "test/regression-tests.ts"
     ]
 }

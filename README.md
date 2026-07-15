@@ -20,6 +20,4 @@ Next, include it in your project by adding it to your tsconfig.json:
 
 ## Contributing & Issues
 
-Currently, this package needs more tests. Pull requests adding test coverage are highly welcome!
-
 If you find any discrepancies or missing definitions, please raise an issue. When doing so, please include a clear code example for each specific overload that is failing.

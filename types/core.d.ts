@@ -4,6 +4,15 @@ declare namespace jStat {
   // -------------------------------------------------------------------------
 
   /**
+   * Sets the random number generator function used by jStat.
+   * By default, jStat uses `Math.random`. You can provide a custom function
+   * that returns a random number in the range [0, 1).
+   *
+   * @param fn A function that returns a random number in [0, 1).
+   */
+  function setRandom(fn: typeof Math.random): void;
+
+  /**
    * Returns the number of rows in a matrix.
    *
    * @param array The input matrix (2D array).

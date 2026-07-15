@@ -7,6 +7,7 @@
 /// <reference path="./types/special.d.ts" />
 /// <reference path="./types/algebra.d.ts" />
 /// <reference path="./types/distribution.d.ts" />
+/// <reference path="./types/regression.d.ts" />
 
 /**
  * jStat is a statistical library with static methods for direct calculations

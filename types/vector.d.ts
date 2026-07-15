@@ -230,6 +230,16 @@ declare namespace jStat {
   function meddev(array: ReadonlyArray<number>): number;
 
   /**
+   * Returns the standardized moment of order `n`.
+   * This is the general form of skewness (n=3) and kurtosis (n=4).
+   *
+   * @param array The input vector.
+   * @param n The moment order. Use 3 for skewness, 4 for kurtosis (add 3 for excess kurtosis).
+   * @returns (1/n) Σ ((xᵢ − mean) / stdev)ⁿ.
+   */
+  function stanMoment(array: ReadonlyArray<number>, n: number): number;
+
+  /**
    * Returns the (Pearson's) moment coefficient of skewness.
    * Measures the asymmetry of the distribution.
    *
