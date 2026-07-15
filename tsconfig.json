@@ -25,6 +25,7 @@
         "test/algebra-tests.ts",
         "test/jstat-tests.ts",
         "test/tests-tests.ts",
-        "test/special-tests.ts"
+        "test/special-tests.ts",
+        "test/distribution-tests.ts"
     ]
 }

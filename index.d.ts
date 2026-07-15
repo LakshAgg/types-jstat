@@ -313,27 +313,29 @@ declare namespace jStat {
 
         anovaftes(): number;
 
-        // -- Distribution instance methods --
-        beta(alpha: number, beta: number): ContinuousDistribution<JStat>;
-        cauchy(local: number, scale: number): ContinuousDistribution<JStat>;
-        centralF(df1: number, df2: number): ContinuousNoMedian;
-        chisquare(dof: number): ContinuousDistribution<JStat>;
-        exponential(rate: number): ContinuousDistribution<JStat>;
-        gamma(shape: number, scale: number): ContinuousNoMedian;
-        invgamma(shape: number, scale: number): ContinuousNoMedian;
-        kumaraswamy(alpha: number, beta: number): ContinuousNoSample;
-        lognormal(mu: number, sigma: number): ContinuousDistribution<JStat>;
-        pareto(scale: number, shape: number): ContinuousNoSample;
-        studentt(dof: number): ContinuousDistribution<JStat>;
-        tukey(nmeans: number, dof: number): TukeyInstance;
-        weibull(scale: number, shape: number): ContinuousDistribution<JStat>;
-        uniform(a: number, b: number): ContinuousDistribution<JStat>;
-        arcsine(a: number, b: number): ContinuousDistribution<JStat>;
-        triangular(a: number, b: number, c: number): TriangularInstance;
-        binomial(n: number, p: number): DiscreteBasic;
-        negbin(r: number, p: number): DiscreteBasic;
-        hypgeom(N: number, m: number, n: number): DiscreteBasic;
-        poisson(lambda: number): PoissonInstance;
+        beta(alpha: number, beta: number): WithDataDist<ContinuousDistribution>;
+        cauchy(local: number, scale: number): WithDataDist<Omit<ContinuousDistribution, "mean" | "variance">>;
+        centralF(df1: number, df2: number): WithDataDist<ContinuousNoMedian>;
+        chisquare(dof: number): WithDataDist<ContinuousDistribution>;
+        exponential(rate: number): WithDataDist<ContinuousDistribution>;
+        gamma(shape: number, scale: number): WithDataDist<ContinuousNoMedian>;
+        invgamma(shape: number, scale: number): WithDataDist<ContinuousNoMedian>;
+        kumaraswamy(a: number, b: number): WithDataDist<Omit<ContinuousNoSample, "variance">>;
+        lognormal(mu: number, sigma: number): WithDataDist<ContinuousDistribution>;
+        normal(mean: number, std: number): WithDataDist<ContinuousDistribution>;
+        laplace(mu: number, b: number): WithDataDist<ContinuousNoInv>;
+        noncentralt(dof: number, ncp: number): WithDataDist<NoncentralTInstance>;
+        pareto(scale: number, shape: number): WithDataDist<ContinuousNoSample>;
+        studentt(dof: number): WithDataDist<ContinuousDistribution>;
+        tukey(nmeans: number, dof: number): WithDataDist<TukeyInstance>;
+        weibull(scale: number, shape: number): WithDataDist<ContinuousDistribution>;
+        uniform(a: number, b: number): WithDataDist<Omit<ContinuousDistribution, "median" | "mode">>;
+        arcsine(a: number, b: number): WithDataDist<Omit<ContinuousDistribution, "mode">>;
+        triangular(a: number, b: number, c: number): WithDataDist<TriangularInstance>;
+        binomial(n: number, p: number): WithDataDist<DiscreteBasic>;
+        negbin(r: number, p: number): WithDataDist<DiscreteBasic>;
+        hypgeom(N: number, m: number, n: number): WithDataDist<DiscreteBasic>;
+        poisson(lambda: number): WithDataDist<PoissonInstance>;
 
         // -- Utility / missing instance methods --
         /** Returns a plain JavaScript array (or array of arrays) from the instance. */

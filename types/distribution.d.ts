@@ -36,7 +36,7 @@ declare namespace jStat {
     function sample(local: number, scale: number): number;
   }
   /** Cauchy distribution with location and scale parameters. */
-  function cauchy(local: number, scale: number): ContinuousDistribution;
+  function cauchy(local: number, scale: number): Omit<ContinuousDistribution, "mean" | "variance">;
 
   // Central F (no median)
   namespace centralF {
@@ -100,7 +100,9 @@ declare namespace jStat {
     function mean(shape: number, scale: number): number;
     function mode(shape: number, scale: number): number;
     function sample(shape: number, scale: number): number;
-    function variance(shape: number, scale: number): number;
+
+    // shape <= 2: variance is undefined
+    function variance(shape: number, scale: number): number | undefined;
   }
   /** Inverse Gamma distribution parameterized by shape and scale. */
   function invgamma(shape: number, scale: number): ContinuousNoMedian;
@@ -113,10 +115,14 @@ declare namespace jStat {
     function mean(a: number, b: number): number;
     function median(a: number, b: number): number;
     function mode(a: number, b: number): number;
+
+    /**
+     * @deprecated variance is not implemented for kumaraswamy distribution
+     */
     function variance(a: number, b: number): number;
   }
   /** Kumaraswamy distribution. */
-  function kumaraswamy(a: number, b: number): ContinuousNoSample;
+  function kumaraswamy(a: number, b: number): Omit<ContinuousNoSample, "variance">;
 
   // Log-normal
   namespace lognormal {
@@ -175,7 +181,9 @@ declare namespace jStat {
     function mean(scale: number, shape: number): number;
     function median(scale: number, shape: number): number;
     function mode(scale: number, shape: number): number;
-    function variance(scale: number, shape: number): number;
+
+    // shape <= 2: variance is undefined
+    function variance(scale: number, shape: number): number | undefined;
   }
   /** Pareto distribution. */
   function pareto(scale: number, shape: number): ContinuousNoSample;
@@ -222,13 +230,19 @@ declare namespace jStat {
     function cdf(x: number, a: number, b: number): number;
     function inv(p: number, a: number, b: number): number;
     function mean(a: number, b: number): number;
+    /**
+     * @deprecated median is broken: always NnA
+     */
     function median(a: number, b: number): number;
+    /**
+     * @deprecated not implemented
+     */
     function mode(a: number, b: number): number;
     function sample(a: number, b: number): number;
     function variance(a: number, b: number): number;
   }
   /** Uniform distribution on the interval [a, b]. */
-  function uniform(a: number, b: number): ContinuousDistribution;
+  function uniform(a: number, b: number): Omit<ContinuousDistribution, "median" | "mode">;
 
   // Arcsine
   namespace arcsine {
@@ -237,17 +251,21 @@ declare namespace jStat {
     function inv(p: number, a: number, b: number): number;
     function mean(a: number, b: number): number;
     function median(a: number, b: number): number;
+    /**
+     * @deprecated not implemented
+     */
     function mode(a: number, b: number): number;
     function sample(a: number, b: number): number;
     function variance(a: number, b: number): number;
   }
   /** Arcsine distribution. */
-  function arcsine(a: number, b: number): ContinuousDistribution;
+  function arcsine(a: number, b: number): Omit<ContinuousDistribution, "mode">;
 
-  // Triangular (no inv)
+  // Triangular
   namespace triangular {
     function pdf(x: number, a: number, b: number, c: number): number;
     function cdf(x: number, a: number, b: number, c: number): number;
+    function inv(p: number, a: number, b: number, c: number): number;
     function mean(a: number, b: number, c: number): number;
     function median(a: number, b: number, c: number): number;
     function mode(a: number, b: number, c: number): number;
@@ -290,6 +308,8 @@ declare namespace jStat {
     function pdf(k: number, lambda: number): number;
     function cdf(x: number, lambda: number): number;
     function sample(lambda: number): number;
+    function sampleSmall(lambda: number): number;
+    function sampleLarge(lambda: number): number;
   }
   /** Poisson distribution. */
   function poisson(lambda: number): PoissonInstance;

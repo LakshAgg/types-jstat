@@ -14,14 +14,13 @@ declare namespace jStat {
     step?: number;
   };
 
-
   interface SliceOptions {
     start?: number;
     end?: number;
     row?: SliceOptions;
     col?: SliceOptions;
   }
-  
+
   interface Utils {
     calcRdx(num0: number, num1: number): number;
     isArray(arg: unknown): arg is unknown[];
@@ -43,41 +42,13 @@ declare namespace jStat {
   }
 
   // Distribution instance interfaces
-  interface ContinuousDistribution<T = number> {
-    pdf(): T;
-    pdf(x: number): T;
-    cdf(x: number): T;
-    inv(p: number): T;
-    mean(): T;
-    median(): T;
-    mode(): number;
-    sample(): number;
-    variance(): number;
-  }
-
-  interface ContinuousNoMedian {
+  interface ContinuousDistribution {
     pdf(x: number): number;
+    pdf(x: Array1D | Array2D): JStat;
     cdf(x: number): number;
+    cdf(x: Array1D | Array2D): JStat;
     inv(p: number): number;
-    mean(): number;
-    mode(): number;
-    sample(): number;
-    variance(): number;
-  }
-
-  interface ContinuousNoSample {
-    pdf(x: number): number;
-    cdf(x: number): number;
-    inv(p: number): number;
-    mean(): number;
-    median(): number;
-    mode(): number;
-    variance(): number;
-  }
-
-  interface TriangularInstance {
-    pdf(x: number): number;
-    cdf(x: number): number;
+    inv(p: Array1D | Array2D): JStat;
     mean(): number;
     median(): number;
     mode(): number;
@@ -85,36 +56,37 @@ declare namespace jStat {
     variance(): number;
   }
 
-  interface ContinuousNoInv {
+  interface DistDataOverloads {
+    pdf(): JStat;
     pdf(x: number): number;
+    pdf(x: Array1D | Array2D): JStat;
+    cdf(): JStat;
     cdf(x: number): number;
-    mean(): number;
-    median(): number;
-    mode(): number;
-    sample(): number;
-    variance(): number;
-  }
-
-  interface NoncentralTInstance {
-    pdf(x: number): number;
-    cdf(x: number): number;
-  }
-
-  interface TukeyInstance {
-    cdf(q: number): number;
+    cdf(x: Array1D | Array2D): JStat;
+    inv(): JStat;
     inv(p: number): number;
+    inv(p: Array1D | Array2D): JStat;
   }
 
-  interface DiscreteBasic {
-    pdf(k: number): number;
-    cdf(k: number): number;
-  }
+  type WithDataDist<T> = Omit<T, "pdf" | "cdf" | "inv"> & {
+    [K in Extract<keyof T, "pdf" | "cdf" | "inv">]: DistDataOverloads[K];
+  };
 
-  interface PoissonInstance {
-    pdf(k: number): number;
-    cdf(x: number): number;
-    sample(): number;
-  }
+  type ContinuousNoMedian = Omit<ContinuousDistribution, "median">;
+
+  type ContinuousNoSample = Omit<ContinuousDistribution, "sample">;
+
+  type TriangularInstance = Omit<ContinuousDistribution, "inv">;
+
+  type ContinuousNoInv = Omit<ContinuousDistribution, "inv">;
+
+  type NoncentralTInstance = Pick<ContinuousDistribution, "pdf" | "cdf">;
+
+  type TukeyInstance = Pick<ContinuousDistribution, "cdf" | "inv">;
+
+  type DiscreteBasic = Pick<ContinuousDistribution, "pdf" | "cdf">;
+
+  type PoissonInstance = Pick<ContinuousDistribution, "pdf" | "cdf" | "sample">;
 
   // OLS model result types (from models.js)
   interface OLSModel {
